@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+group 'org.sun.ghosh'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_20
+targetCompatibility = JavaVersion.VERSION_20
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    options.compilerArgs.addAll(
+            ['--enable-preview'
+            ])
+}
+
+dependencies {
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
