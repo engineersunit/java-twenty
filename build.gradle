@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'org.sun.ghosh'
@@ -8,13 +9,24 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = JavaVersion.VERSION_20
 targetCompatibility = JavaVersion.VERSION_20
 
+ext {
+    javaMainClass = "org.sun.ghosh.MyFavoriteJavaSites"
+}
+
+application {
+    mainClassName = javaMainClass
+    applicationDefaultJvmArgs = ["--enable-preview"]
+
+}
+
 repositories {
     mavenCentral()
 }
 
 compileJava {
     options.compilerArgs.addAll(
-            ['--enable-preview'
+            ['--enable-preview',
+             '--add-modules', 'jdk.incubator.concurrent'
             ])
 }
 
