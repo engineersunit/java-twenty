@@ -25,9 +25,19 @@ import java.util.stream.Collectors;
 
 public class MyFavoriteJavaSites {
     enum Mode {
-        VIRTUAL, PLATFORM, QUICK, // StructuredTaskScope.ShutdownOnSuccess
+        VIRTUAL,
+        PLATFORM,
+        QUICK, // StructuredTaskScope.ShutdownOnSuccess
         ALL_OR_NONE // StructuredTaskScope.ShutdownOnFailure
     }
+
+    enum HttpSecurity {
+        http,
+        https
+    }
+
+    final static ThreadLocal<HttpSecurity> SECURE =
+            ThreadLocal.withInitial(() -> HttpSecurity.https);
 
     public static void main(String[] args) {
         String mode = args[0];
@@ -78,7 +88,7 @@ public class MyFavoriteJavaSites {
                             myFavSitesURLList.stream()
                                     .map(url -> scope.fork(() -> fetchURL(url)))
                                     .collect(Collectors.toList());
-                    scope.join();           // Join both forks
+                    scope.join();           // Join forks
                     scope.throwIfFailed(e -> e);  // ... and propagate errors
                 } catch (Throwable e) {
                     throw new RuntimeException(e);
@@ -93,9 +103,10 @@ public class MyFavoriteJavaSites {
         Duration between = Duration.between(startTime, endTime);
         System.out.println(String.format("Mode: %s. Created automated " +
                         "reading" + " " + "digest " + "for: %d websites in %d" +
-                        "seconds or %d nanoseconds.",
+                        " seconds and %d nanoseconds.",
                 runMode,
-                myFavSitesURLList.size(), between.get(ChronoUnit.SECONDS), between.get(ChronoUnit.NANOS)));
+                myFavSitesURLList.size(), between.get(ChronoUnit.SECONDS),
+                between.get(ChronoUnit.NANOS)));
 
     }
 
@@ -128,9 +139,21 @@ public class MyFavoriteJavaSites {
     }
 
     static String fetchURL(URL url) throws IOException {
+        // Set the security level when the virtual thread is submitted and run
+        SECURE.set(HttpSecurity.valueOf(url.getProtocol()));
+
         try (var in = url.openStream()) {
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+            String siteContent = new String(in.readAllBytes(),
+                    StandardCharsets.UTF_8);
+            validateSiteContent(siteContent);
+            return siteContent;
         }
+    }
+
+    private static void validateSiteContent(String siteContent) {
+        System.out.println(String.format("For thread %s the site content was " +
+                "fetched by %s protocol", Thread.currentThread(),
+                SECURE.get()));
     }
 
     private static List<String> readFileInList(String fileName) {
