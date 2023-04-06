@@ -38,6 +38,8 @@ public class MyFavoriteJavaSites {
 
     final static ThreadLocal<HttpSecurity> SECURE =
             ThreadLocal.withInitial(() -> HttpSecurity.https);
+    final static ThreadLocal<String> SITE_URL =
+            ThreadLocal.withInitial(() -> "https://github.com/engineersunit/java-twenty");
 
     public static void main(String[] args) {
         String mode = args[0];
@@ -141,18 +143,23 @@ public class MyFavoriteJavaSites {
     static String fetchURL(URL url) throws IOException {
         // Set the security level when the virtual thread is submitted and run
         SECURE.set(HttpSecurity.valueOf(url.getProtocol()));
-
+        SITE_URL.set(url.toString());
         try (var in = url.openStream()) {
             String siteContent = new String(in.readAllBytes(),
                     StandardCharsets.UTF_8);
+            // Utility methods in another class
             validateSiteContent(siteContent);
+            SECURE.remove();
+            SITE_URL.remove();
             return siteContent;
         }
     }
 
     private static void validateSiteContent(String siteContent) {
-        System.out.println(String.format("For thread %s the site content was " +
+        System.out.println(String.format("For thread %s the site (%s) content" +
+                        " was " +
                 "fetched by %s protocol", Thread.currentThread(),
+                SITE_URL.get(),
                 SECURE.get()));
     }
 
