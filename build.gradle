@@ -15,8 +15,7 @@ ext {
 
 application {
     mainClassName = javaMainClass
-    applicationDefaultJvmArgs = ["--enable-preview"]
-
+    applicationDefaultJvmArgs = ["--enable-preview", '--add-modules', 'jdk.incubator.concurrent']
 }
 
 repositories {

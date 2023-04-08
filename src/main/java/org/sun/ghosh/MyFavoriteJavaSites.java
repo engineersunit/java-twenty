@@ -1,5 +1,6 @@
 package org.sun.ghosh;
 
+import jdk.incubator.concurrent.ScopedValue;
 import jdk.incubator.concurrent.StructuredTaskScope;
 
 import java.io.FileWriter;
@@ -23,12 +24,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import static org.sun.ghosh.MyFavoriteJavaSites.*;
+import static org.sun.ghosh.MyFavoriteJavaSites.SITE_URL;
+
 public class MyFavoriteJavaSites {
     enum Mode {
         VIRTUAL,
         PLATFORM,
         QUICK, // StructuredTaskScope.ShutdownOnSuccess
-        ALL_OR_NONE // StructuredTaskScope.ShutdownOnFailure
+        ALL_OR_NONE, // StructuredTaskScope.ShutdownOnFailure
+        SCOPED_VALUE
+
     }
 
     enum HttpSecurity {
@@ -37,16 +43,17 @@ public class MyFavoriteJavaSites {
     }
 
     final static ThreadLocal<HttpSecurity> SECURE =
-            ThreadLocal.withInitial(() -> HttpSecurity.https);
-    final static ThreadLocal<String> SITE_URL =
-            ThreadLocal.withInitial(() -> "https://github.com/engineersunit/java-twenty");
+            ThreadLocal.withInitial
+                    (() -> HttpSecurity.https);
+    final static ScopedValue<URL> SITE_URL =
+            ScopedValue.newInstance();
 
     public static void main(String[] args) {
         String mode = args[0];
         Mode runMode = Mode.valueOf(Objects.isNull(mode) ? "VIRTUAL" : mode);
         List<Future> futures = new ArrayList<>();
 
-        List<URL> myFavSitesURLList = getURLsFromSource();
+        List<URL> myFavSitesURLList = Utils.getURLsFromSource();
 
 
         Instant startTime = Instant.now();
@@ -57,7 +64,7 @@ public class MyFavoriteJavaSites {
                              Executors.newVirtualThreadPerTaskExecutor()) {
                     futures =
                             myFavSitesURLList.stream()
-                                    .map(url -> executor.submit(() -> fetchURL(url)))
+                                    .map(url -> executor.submit(() -> Utils.fetchURL(url)))
                                     .collect(Collectors.toList());
 
                 }
@@ -66,7 +73,7 @@ public class MyFavoriteJavaSites {
                 try (var executor = Executors.newCachedThreadPool()) {
                     futures =
                             myFavSitesURLList.stream()
-                                    .map(url -> executor.submit(() -> fetchURL(url)))
+                                    .map(url -> executor.submit(() -> Utils.fetchURL(url)))
                                     .collect(Collectors.toList());
                 }
                 break;
@@ -75,7 +82,7 @@ public class MyFavoriteJavaSites {
                              new StructuredTaskScope.ShutdownOnSuccess<String>()) {
                     futures =
                             myFavSitesURLList.stream()
-                                    .map(url -> scope.fork(() -> fetchURL(url)))
+                                    .map(url -> scope.fork(() -> Utils.fetchURL(url)))
                                     .collect(Collectors.toList());
 
                     var result = scope.join().result();
@@ -88,7 +95,7 @@ public class MyFavoriteJavaSites {
                 try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
                     futures =
                             myFavSitesURLList.stream()
-                                    .map(url -> scope.fork(() -> fetchURL(url)))
+                                    .map(url -> scope.fork(() -> Utils.fetchURL(url)))
                                     .collect(Collectors.toList());
                     scope.join();           // Join forks
                     scope.throwIfFailed(e -> e);  // ... and propagate errors
@@ -96,8 +103,14 @@ public class MyFavoriteJavaSites {
                     throw new RuntimeException(e);
                 }
                 break;
-        }
+            case SCOPED_VALUE:
+                for (URL url : myFavSitesURLList) {
+                    ScopedValue.where(SITE_URL, url)
+                            .run(Utils::fetchURL);
+                }
+                break;
 
+        }
 
         processFutures(futures);
 
@@ -140,28 +153,54 @@ public class MyFavoriteJavaSites {
         }
     }
 
-    static String fetchURL(URL url) throws IOException {
-        // Set the security level when the virtual thread is submitted and run
+}
+
+class Utils {
+    public static boolean isSiteContentSecure() {
+        System.out.println(String.format("For thread %s the site (%s) content" +
+                        " was " +
+                        "fetched by %s protocol", Thread.currentThread(),
+                SITE_URL.isBound() ? SITE_URL.get()
+                        : "Unknown", SECURE.get()));
+        return SECURE.get().equals(HttpSecurity.https);
+    }
+
+    /**
+     * Overloaded method which utilizes ScopedValue SITE_URL
+     *
+     * @return Site content
+     * @throws IOException
+     */
+    public static String fetchURL() {
+
+        return fetchURL(SITE_URL.isBound() ? SITE_URL.get() : null);
+    }
+
+    public static String fetchURL(URL url) {
+        // Set the ThreadLocal variable SECURE - security level when the
+        // virtual thread is submitted and run
         SECURE.set(HttpSecurity.valueOf(url.getProtocol()));
-        SITE_URL.set(url.toString());
+        // Utility methods in another class uses the ThreadLocal variable SECURE
+        boolean isSiteContentSecure = Utils.isSiteContentSecure();
+        if (!isSiteContentSecure) {
+            return "";
+        }
         try (var in = url.openStream()) {
             String siteContent = new String(in.readAllBytes(),
                     StandardCharsets.UTF_8);
-            // Utility methods in another class
-            validateSiteContent(siteContent);
             SECURE.remove();
-            SITE_URL.remove();
             return siteContent;
+        } catch (IOException e) {
+            e.printStackTrace();
+            String returnStr =  String.format("The site %s was not fetched " +
+                            "due to " +
+                            "exception %s, details: %s",
+                    SITE_URL.isBound() ? SITE_URL.get() : null,
+                    e.getClass(), e.getMessage());
+            return returnStr;
         }
     }
 
-    private static void validateSiteContent(String siteContent) {
-        System.out.println(String.format("For thread %s the site (%s) content" +
-                        " was " +
-                "fetched by %s protocol", Thread.currentThread(),
-                SITE_URL.get(),
-                SECURE.get()));
-    }
 
     private static List<String> readFileInList(String fileName) {
 
@@ -176,7 +215,7 @@ public class MyFavoriteJavaSites {
         return lines;
     }
 
-    private static List<URL> getURLsFromSource() {
+    public static List<URL> getURLsFromSource() {
         return readFileInList("D:\\MyFavSites.txt").stream().map(url -> {
             try {
                 return new URI(url).toURL();
