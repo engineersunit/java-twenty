@@ -2,39 +2,34 @@ package org.sun.ghosh;
 
 import java.util.List;
 
-record Name(String firstName, String lastName) {
-}
+record Name(String firstName,
+            String lastName) {}
 
-record CartesianCoordinate(double x, double y, double z) {
-}
+record CartesianCoordinate(double x,
+                           double y,
+                           double z) {}
 
-record Geolocation(double latitude, double longitude, double altitude) {
-}
+record Geolocation(double latitude,
+                   double longitude,
+                   double altitude) {}
 
-record MapCoordinate(CartesianCoordinate cc, Geolocation gl) {
-}
+record MapCoordinate(CartesianCoordinate cc,
+                     Geolocation gl) {}
 
 record MapLocation(MapCoordinate upperLeft,
-                   MapCoordinate lowerRight) {
-}
+                   MapCoordinate lowerRight) {}
 
-class A {
-}
+class A {}
 
-class B extends A {
-}
+class B extends A {}
 
-sealed interface I permits C, D {
-}
+sealed interface I permits C, D {}
 
-final class C implements I {
-}
+final class C implements I {}
 
-final class D implements I {
-}
+final class D implements I {}
 
-record Pair<T>(T x, T y) {
-}
+record Pair<T>(T x, T y) {}
 
 
 public class RecordPattern {
@@ -44,7 +39,9 @@ public class RecordPattern {
         // Old code
         if (userValue instanceof String) {
             String s = (String) userValue;
-            System.out.println(String.format("You passed %s to the program",
+            System.out.println(
+                    String.format(
+                    "You passed %s to the program",
                     s));
         }
 
@@ -53,7 +50,9 @@ public class RecordPattern {
         // 1. Uses type pattern - "String s"
         // 2. Perform pattern matching on "String s"
         if (userValue instanceof String s) {
-            System.out.println(String.format("You passed %s to the program",
+            System.out.println(
+                    String.format(
+                    "You passed %s to the program",
                     s));
         }
 
@@ -71,19 +70,30 @@ public class RecordPattern {
         }
 
         // Record Pattern
-        if (name instanceof Name(String firstName, String lastName)) {
-            System.out.println(String.format("You passed values %s and %s " +
-                    "to the program. Name is %s.", String.format("%s %s",
+        if (name instanceof Name(
+                String firstName,
+                String lastName)) {
+            System.out.println(
+                    String.format(
+                    "You passed values %s and %s " +
+                    "to the program. Name is %s.",
+                    String.format("%s %s",
                     firstName, lastName)));
         }
 
         List<CartesianCoordinate> CartesianCoordinateList =
                 List.of(new CartesianCoordinate(1, 1, 1),
                         new CartesianCoordinate(2, 2, 2));
+        // Record Pattern in for header!
         for (CartesianCoordinate(
-                var x, var y, var z
-        ) : CartesianCoordinateList) {        // Record Pattern in header!
-            System.out.println("(" + x + ", " + y + ", " + z + ")");
+                var x,
+                var y,
+                var z
+        ) : CartesianCoordinateList) {
+            System.out.println(
+                    "(" + x + ", " +
+                            "" + y + ", " +
+                            "" + z + ")");
         }
 
         Pair<A> p1 = null;
@@ -102,49 +112,66 @@ public class RecordPattern {
     }
 
     /**
-     * If we want to extract the color from the upper-left
-     * CartesianCoordinate, we could
-     * write
+     * If we want to extract the
+     * cartesian coordinates
+     * from the upper-left
+     * MapCoordinate, we could write
      *
      * @param r
      */
-    static void printUpperLeftMapCartesianCoordinate(MapLocation r) {
+    static void
+    printUpperLeftMapCartesianCoordinate
+    (MapLocation r)
+    {
         if (r instanceof MapLocation(
-                MapCoordinate ul, MapCoordinate lr
+                MapCoordinate ul,
+                MapCoordinate lr
         )) {
             System.out.println(ul.cc());
         }
     }
 
     /**
-     * We can nest another pattern inside the record pattern, and
-     * decompose both the outer and inner records at once
+     * We can nest another pattern
+     * inside the record pattern, and
+     * decompose both the
+     * outer and inner records at once
      *
      * @param r
      */
-    static void printHeightOfUpperLeftMapCartesianCoordinate(MapLocation r) {
+    static void printHeightOfUpperLeftMapCartesianCoordinate
+    (MapLocation r)
+    {
         if (r instanceof MapLocation(
-                MapCoordinate(CartesianCoordinate p, Geolocation c),
+                MapCoordinate(
+                        CartesianCoordinate cc,
+                        Geolocation gl),
                 MapCoordinate lr
         )) {
-            System.out.println(c);
+            System.out.println(cc.z());
         }
     }
 
     /**
-     * With nested patterns we can deconstruct such a MapLocation with
-     * code that echoes the structure of the nested constructors
-     *
+     * With nested patterns we can
+     * deconstruct such a MapLocation with
+     * code that echoes the structure
+     * of the nested constructors
      * @param r
      */
-    static void printXCoordOfUpperLeftCartesianCoordinateWithPatterns(MapLocation r) {
+    static void printXCoordOfUpperLeftCartesianCoordinateWithPatterns
+    (MapLocation r) {
         if (r instanceof MapLocation(
                 MapCoordinate(
-                        CartesianCoordinate(var x, var y, var z), var c
+                        CartesianCoordinate(
+                                var x,
+                                var y,
+                                var z), var c
                 ),
                 var lr
         )) {
-            System.out.println("Upper-left corner: " + x);
+            System.out.println(
+                    "Upper-left corner: " + x);
         }
     }
 
@@ -155,7 +182,8 @@ public class RecordPattern {
      */
     static void printUpperLeftGeolocation(MapLocation[] r) {
         for (MapLocation(
-                MapCoordinate(CartesianCoordinate p, Geolocation c),
+                MapCoordinate(
+                        CartesianCoordinate p, Geolocation c),
                 MapCoordinate lr
         ) : r) {
             System.out.println(c);

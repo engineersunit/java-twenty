@@ -1,0 +1,40 @@
+BREAKFAST_START
+Omelette
+Fruit Salad
+Coffee with toast
+Oatmeal
+Bread with Butter
+Veg Sandwich
+Chicken Sandwich
+French toast
+BREAKFAST_END
+
+LUNCH_START
+Tomato Soup
+Chicken Soup
+Veg Fried Rice
+Egg Fried Rice
+Chicken Fried Rice
+Veg Noodles
+Egg Noodles
+Chicken Noodles
+LUNCH_END
+
+SNACKS_START
+Samosa
+Veg Patties
+Egg Patties
+Chicken Patties
+Veg Momo
+Egg Momo
+Chicken Momo
+SNACKS_END
+
+DINNER_START
+Veg Salad
+Egg Salad
+Chicken Salad
+Tomato Soup
+Chicken Soup
+Noodle Soup
+DINNER_END
