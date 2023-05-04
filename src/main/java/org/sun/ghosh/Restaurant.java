@@ -19,7 +19,6 @@ public class Restaurant {
 
     private static Menu getMenuType() {
         int hourOfDay = LocalDateTime.now().getHour();
-        hourOfDay = 16;
         return switch (hourOfDay) {
             case 6, 7, 8, 9, 10, 11 -> Menu.BREAKFAST;
             case 12, 13, 14, 15 -> Menu.LUNCH;
@@ -33,11 +32,11 @@ public class Restaurant {
         List<String> allMenuItems = Utils
                 .readFileInList(
                         "./src/main/java/org/sun/ghosh/MyFavFoodItems.txt");
-        System.out.println("All Menu Items: " + allMenuItems);
+        System.out.println("All Menu Items: \n" + allMenuItems + "\n");
         // Get the current menu on the basis of time of the day
         Menu currentMenu = getMenuType();
         System.out.println("The current running Menu is: " +
-                currentMenu.toString().toLowerCase());
+                currentMenu.toString().toLowerCase() + "\n");
 
         // prepare the start and end markers
         String startMarker = currentMenu + START;

@@ -29,10 +29,8 @@ public class Utils {
      * Overloaded method which utilizes ScopedValue SITE_URL
      *
      * @return Site content
-     * @throws IOException
      */
     public static String fetchURL() {
-
         return fetchURL(SITE_URL.isBound() ? SITE_URL.get() : null);
     }
 

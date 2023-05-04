@@ -3,6 +3,22 @@ plugins {
     id 'application'
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+jar {
+    archiveBaseName = 'Java20'
+    archiveVersion =  '0.1.0'
+}
+
+javadoc.options {
+    addBooleanOption('-enable-preview', true)
+    addStringOption('-release', '20')
+    addStringOption('-add-modules', 'jdk.incubator.concurrent')
+}
+
 group 'org.sun.ghosh'
 version '1.0-SNAPSHOT'
 
@@ -10,12 +26,20 @@ sourceCompatibility = JavaVersion.VERSION_20
 targetCompatibility = JavaVersion.VERSION_20
 
 ext {
-    javaMainClass = "org.sun.ghosh.MyFavoriteJavaSites"
+    javaMainClass = "org.sun.ghosh.dependencyManagement.MyApp"
 }
 
 application {
     mainClassName = javaMainClass
     applicationDefaultJvmArgs = ["--enable-preview", '--add-modules', 'jdk.incubator.concurrent']
+}
+
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                "Main-Class": javaMainClass)
+    }
 }
 
 repositories {
@@ -29,9 +53,29 @@ compileJava {
             ])
 }
 
-dependencies {
-//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+dependencies {}
+compileJava{
+    dependsOn clean
+}
+
+task MyAppJar(type: Jar, dependsOn: ['compileJava']) {
+    archiveFileName = "MyApp.jar"
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                "Main-Class": javaMainClass)
+    }
+    from(sourceSets.main.output) {
+        //org.sun.ghosh.dependencyManagement
+        include "org/sun/ghosh/dependencyManagement/MyApp.class"
+    }
+}
+
+task runMyAppWithExecJarExecutable(type: Exec, dependsOn: ['MyAppJar']) {
+    dependsOn jar
+    group = "My App Execution"
+    description = "Run the output executable jar with ExecTask"
+    commandLine "java", "-jar", MyAppJar.archiveFile.get()
 }
 
 test {
