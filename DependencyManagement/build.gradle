@@ -1,0 +1,110 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+jar {
+    archiveBaseName = 'DependencyManagement'
+    archiveVersion = '0.1.0'
+}
+
+javadoc.options {
+    addBooleanOption('-enable-preview', true)
+    addStringOption('-release', '20')
+    addStringOption('-add-modules', 'jdk.incubator.concurrent')
+}
+
+group 'org.sun.ghosh.dependencyManagement'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_20
+targetCompatibility = JavaVersion.VERSION_20
+
+ext {
+    javaMainClass = "org.sun.ghosh.dependencyManagement.MyApp"
+}
+
+application {
+    mainClassName = javaMainClass
+    applicationDefaultJvmArgs = ["--enable-preview", '--add-modules', 'jdk.incubator.concurrent']
+}
+
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                "Main-Class": javaMainClass)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    options.compilerArgs.addAll(
+            ['--enable-preview',
+             '--add-modules', 'jdk.incubator.concurrent'
+            ])
+}
+
+dependencies {}
+
+/*compileJava {
+    dependsOn clean
+}*/
+
+task MyAppJar(type: Jar, dependsOn: ['compileJava']) {
+    archiveFileName = "MyApp.jar"
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                "Main-Class": javaMainClass,
+                "Class-Path": "AnotherAPI.jar SomeOtherAPI.jar")
+    }
+    from(sourceSets.main.output) {
+        //org.sun.ghosh.dependencyManagement
+        include "org/sun/ghosh/dependencyManagement/MyApp.class"
+    }
+}
+
+task AnotherAPIJar(type: Jar, dependsOn: ['compileJava']) {
+    archiveFileName = "AnotherAPI.jar"
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                "Class-Path": "SomeOtherAPI.jar")
+    }
+    from(sourceSets.main.output) {
+        //org.sun.ghosh.dependencyManagement
+        include "org/sun/ghosh/dependencyManagement/AnotherAPI.class"
+    }
+}
+
+task SomeOtherAPIJar(type: Jar, dependsOn: ['compileJava']) {
+    archiveFileName = "SomeOtherAPI.jar"
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version)
+    }
+    from(sourceSets.main.output) {
+        //org.sun.ghosh.dependencyManagement
+        include "org/sun/ghosh/dependencyManagement/SomeOtherAPI.class"
+    }
+}
+
+task runMyAppWithExecJarExecutable(type: Exec, dependsOn:
+        ['MyAppJar', 'AnotherAPIJar', 'SomeOtherAPIJar']) {
+    group = "My App Execution"
+    description = "Run the executable jar with ExecTask"
+    commandLine "java", "-jar", MyAppJar.archiveFile.get()
+}
+
+test {
+    useJUnitPlatform()
+}

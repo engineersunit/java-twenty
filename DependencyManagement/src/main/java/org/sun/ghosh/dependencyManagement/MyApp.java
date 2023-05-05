@@ -3,9 +3,9 @@ package org.sun.ghosh.dependencyManagement;
 public class MyApp {
     public static void main(String[] args) {
         System.out.println("The code is running " +
-                "in the main application");
+                "in the scope of the main application - MyApp");
         System.out.println("The code is calling " +
-                "Another application");
-        AnotherApp.doTask();
+                "Another API");
+        AnotherAPI.doTask();
     }
 }

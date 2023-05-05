@@ -1,2 +1,3 @@
 rootProject.name = 'Java20'
+include 'DependencyManagement'
 
