@@ -65,7 +65,7 @@ task MyAppJar(type: Jar, dependsOn: ['compileJava']) {
         attributes('Implementation-Title': project.name,
                 'Implementation-Version': project.version,
                 "Main-Class": javaMainClass,
-                "Class-Path": "AnotherAPI.jar SomeOtherAPI.jar")
+                "Class-Path": "AnotherAPI.jar")
     }
     from(sourceSets.main.output) {
         //org.sun.ghosh.dependencyManagement

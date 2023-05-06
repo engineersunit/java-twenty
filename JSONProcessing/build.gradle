@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.sun.ghosh.jsonprocessing'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('jakarta.json:jakarta.json-api:2.1.1')
+    implementation ('org.eclipse.parsson:parsson:1.1.1')
+}
+
+test {
+    useJUnitPlatform()
+}
