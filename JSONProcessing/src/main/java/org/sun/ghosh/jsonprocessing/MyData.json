@@ -1,0 +1,19 @@
+{
+  "attributes": [
+    {
+      "name": "Test1",
+      "kind": "DATA",
+      "dataType": "INTEGER"
+    },
+    {
+      "name": "Test2",
+      "kind": "DATA",
+      "dataType": "STRING"
+    },
+    {
+      "name": "Test2",
+      "kind": "DATA",
+      "dataType": "BOOLEAN"
+    }
+  ]
+}

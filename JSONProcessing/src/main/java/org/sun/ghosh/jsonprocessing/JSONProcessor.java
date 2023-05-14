@@ -5,12 +5,16 @@ import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 
 /**
@@ -27,7 +31,7 @@ public class JSONProcessor {
                     "jsonprocessing/MyData.json";
     private final static String ATTRIBUTE_NAME_ARRAY = "attributes";
     private final static String ATTRIBUTE_NAME_LOGIC_1 = "kind";
-    private final static String VALUE_LOGIC_1 = "SENSOR";
+    private final static String VALUE_LOGIC_1 = "DATA";
     private final static String ATTRIBUTE_NAME_LOGIC_2 = "dataType";
     private final static String VALUE_LOGIC_2 = "INTEGER";
     private final static String ATTRIBUTE_NAME_1 = "name";
@@ -100,19 +104,24 @@ public class JSONProcessor {
     private static void transformJSONFileToCSV() {
         try (InputStream is = Files.newInputStream(Paths.get(INPUT_FILE_NAME));
              JsonReader rdr = Json.createReader(is);
-             BufferedWriter bw = Files.newBufferedWriter(Paths.get(OUTPUT_FILE_NAME), CREATE, TRUNCATE_EXISTING)) {
+             BufferedWriter bw = Files.newBufferedWriter(
+                     Paths.get(OUTPUT_FILE_NAME),
+                     CREATE,
+                     TRUNCATE_EXISTING)) {
 
             JsonObject obj = rdr.readObject();
             JsonArray results = obj.getJsonArray(ATTRIBUTE_NAME_ARRAY);
             int countOfOutputAttributes = 0;
             for (JsonObject result : results.getValuesAs(JsonObject.class)) {
-                // Create a csv output
+
+                // Apply logic using JsonObject methods
                 if (VALUE_LOGIC_1.equals(
                         result.getString(
                                 ATTRIBUTE_NAME_LOGIC_1)) &&
                         VALUE_LOGIC_2.equals(
                                 result.getString(
                                         ATTRIBUTE_NAME_LOGIC_2))) {
+                    // Create a CSV output
                     String toOutput = String.format(
                             "%s,%s\n",
                             result.getString(ATTRIBUTE_NAME_1),
@@ -122,7 +131,9 @@ public class JSONProcessor {
                     countOfOutputAttributes++;
                 }
             }
-            System.out.println(String.format("%d attributes were generated.", countOfOutputAttributes));
+            System.out.println(String.format(
+                    "%d attributes were generated as CSV.",
+                    countOfOutputAttributes));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

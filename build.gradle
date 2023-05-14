@@ -53,7 +53,9 @@ compileJava {
             ])
 }
 
-dependencies {}
+dependencies {
+    implementation('org.openjdk.jol:jol-core:0.17')
+}
 compileJava{
     dependsOn clean
 }
