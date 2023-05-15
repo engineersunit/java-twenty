@@ -4,6 +4,8 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
+import jakarta.json.stream.JsonParser;
+import jakarta.json.stream.JsonParser.Event;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,6 +31,10 @@ public class JSONProcessor {
     private final static String INPUT_FILE_NAME =
             "JSONProcessing/src/main/java/org/sun/ghosh/" +
                     "jsonprocessing/MyData.json";
+
+    private final static String INPUT_STREAM_FILE_NAME =
+            "JSONProcessing/src/main/java/org/sun/ghosh/" +
+                    "jsonprocessing/MyStreamingData.json";
     private final static String ATTRIBUTE_NAME_ARRAY = "attributes";
     private final static String ATTRIBUTE_NAME_LOGIC_1 = "kind";
     private final static String VALUE_LOGIC_1 = "DATA";
@@ -36,6 +42,8 @@ public class JSONProcessor {
     private final static String VALUE_LOGIC_2 = "INTEGER";
     private final static String ATTRIBUTE_NAME_1 = "name";
     private final static String ATTRIBUTE_NAME_2 = "dataType";
+    private final static String ATTRIBUTE_NAME_EMAIL = "email";
+    private final static String ATTRIBUTE_NAME_PREMIUM = "premium";
 
     public static void main(String[] args) {
         /*
@@ -70,35 +78,50 @@ public class JSONProcessor {
         /*
         JsonParser contains methods to parse JSON data using the streaming model.
          */
+        parseStreamDataToJson();
 
-        /*try (InputStream is = Files.newInputStream(Paths.get(FILE_NAME));
+
+        /*
+        JsonGenerator contains methods to write JSON data to an output source.
+         */
+    }
+
+    private static void parseStreamDataToJson() {
+        try (InputStream is = Files.newInputStream(Paths.get(INPUT_STREAM_FILE_NAME));
              JsonParser parser = Json.createParser(is)) {
             while (parser.hasNext()) {
                 Event e = parser.next();
                 if (e == Event.KEY_NAME) {
                     switch (parser.getString()) {
-                        case ATTRIBUTE_NAME_1:
+                        case ATTRIBUTE_NAME_1 -> {
                             parser.next();
                             System.out.print(parser.getString());
-                            System.out.print(": ");
-                            break;
-                        case ATTRIBUTE_NAME_2:
+                            System.out.print(" (");
+                        }
+                        case ATTRIBUTE_NAME_EMAIL -> {
                             parser.next();
-                            System.out.println(parser.getString());
-                            System.out.println("---------");
-                            break;
+                            System.out.print(parser.getString());
+                            System.out.print(") ");
+                        }
+                        case ATTRIBUTE_NAME_PREMIUM -> {
+                            parser.next();
+                            boolean premium = Boolean.parseBoolean(
+                                    parser
+                                            .getValue()
+                                            .toString());
+                            if (premium) {
+                                System.out.println("is a premium user!");
+                            } else {
+                                System.out.println("is not a premium user!");
+                            }
+                            System.out.println("-------------------");
+                        }
                     }
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        */
-
-
-        /*
-        JsonGenerator contains methods to write JSON data to an output source.
-         */
     }
 
     private static void transformJSONFileToCSV() {

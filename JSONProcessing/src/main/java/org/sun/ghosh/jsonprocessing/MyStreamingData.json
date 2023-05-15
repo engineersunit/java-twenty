@@ -1,0 +1,19 @@
+{
+  "Users": [
+    {
+      "name": "Test User 1",
+      "email": "test.user.1@gmail.com",
+      "premium": true
+    },
+    {
+      "name": "Test User 2",
+      "email": "test.user.2@gmail.com",
+      "premium": false
+    },
+    {
+      "name": "Test User 3",
+      "email": "test.user.3@gmail.com",
+      "premium": true
+    }
+  ]
+}

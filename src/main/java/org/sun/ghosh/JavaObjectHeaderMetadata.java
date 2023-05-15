@@ -20,10 +20,16 @@ public class JavaObjectHeaderMetadata {
         System.out.println(s.hashCode());
 
         System.out.println("String Class Layout");
-        System.out.println(ClassLayout.parseClass(String.class).toPrintable());
+        System.out.println(ClassLayout
+                .parseClass(
+                        String.class)
+                .toPrintable());
 
         System.out.println("String Object Layout");
-        System.out.println(ClassLayout.parseInstance(s).toPrintable());
+        System.out.println(
+                ClassLayout
+                        .parseInstance(s)
+                        .toPrintable());
 
     }
 }
