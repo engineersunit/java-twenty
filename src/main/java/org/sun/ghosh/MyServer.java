@@ -44,7 +44,7 @@ public class MyServer {
     }
 
     private static void handleProfileRequests(HttpExchange exchange) throws IOException {
-        String response = null;
+        String response;
         int responseCode = 200;
         switch (exchange.getRequestMethod().toUpperCase()) {
             case "GET" -> {
