@@ -87,7 +87,8 @@ public class JSONProcessor {
     }
 
     private static void parseStreamDataToJson() {
-        try (InputStream is = Files.newInputStream(Paths.get(INPUT_STREAM_FILE_NAME));
+        try (InputStream is = Files.newInputStream(
+                Paths.get(INPUT_STREAM_FILE_NAME));
              JsonParser parser = Json.createParser(is)) {
             while (parser.hasNext()) {
                 Event e = parser.next();

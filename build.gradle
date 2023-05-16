@@ -55,6 +55,24 @@ compileJava {
 
 dependencies {
     implementation('org.openjdk.jol:jol-core:0.17')
+
+    /*
+    Release for Jakarta EE 10   https://jakarta.ee/specifications/platform/10/
+    Jakarta JSON Processing defines a Java based framework
+    for parsing, generating, transforming, and querying
+    JSON documents
+    Maven Repo: https://mvnrepository.com/artifact/jakarta.json/jakarta.json-api
+    Specs: https://jakarta.ee/specifications/jsonp/2.1/
+    */
+
+    implementation('jakarta.json:jakarta.json-api:2.1.1')
+
+    /* Jakarta JSON Processing provider
+    Eclipse Project Page: https://projects.eclipse.org/projects/ee4j.parsson
+    GitHub: https://github.com/eclipse-ee4j/parsson/releases/tag/1.1.1
+    Maven Repo: https://mvnrepository.com/artifact/org.eclipse.parsson/parsson
+    */
+    implementation ('org.eclipse.parsson:parsson:1.1.1')
 }
 compileJava{
     dependsOn clean
