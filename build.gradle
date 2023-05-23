@@ -25,23 +25,6 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = JavaVersion.VERSION_20
 targetCompatibility = JavaVersion.VERSION_20
 
-ext {
-    javaMainClass = "org.sun.ghosh.dependencyManagement.MyApp"
-}
-
-application {
-    mainClassName = javaMainClass
-    applicationDefaultJvmArgs = ["--enable-preview", '--add-modules', 'jdk.incubator.concurrent']
-}
-
-jar {
-    manifest {
-        attributes('Implementation-Title': project.name,
-                'Implementation-Version': project.version,
-                "Main-Class": javaMainClass)
-    }
-}
-
 repositories {
     mavenCentral()
 }

@@ -33,7 +33,8 @@ public class MyServer {
                     0);
             HttpContext profileContext = myServer
                     .createContext(
-                            MY_REST_API_PATH + MY_PROFILE_RESOURCE_PATH);
+                            MY_REST_API_PATH
+                              + MY_PROFILE_RESOURCE_PATH);
             profileContext.setHandler(
                     MyServer::handleProfileRequests);
         } catch (IOException e) {

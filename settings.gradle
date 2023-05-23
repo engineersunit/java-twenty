@@ -1,4 +1,5 @@
 rootProject.name = 'Java20'
 include 'DependencyManagement'
 include 'JSONProcessing'
+include 'VirtualThreads'
 
