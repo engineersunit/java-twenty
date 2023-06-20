@@ -17,9 +17,10 @@ public class PasswordUtil {
 
     private final static List<Character> listOfPasswordCandidates = Collections.
             synchronizedList(new ArrayList<>());
-    final static int TYPE_MAX_CHAR = 40000;
+    final static int TYPE_MAX_CHAR = 400;
 
-    private static final CyclicBarrier cyclicBarrier = new CyclicBarrier(
+    private static final CyclicBarrier cyclicBarrier =
+            new CyclicBarrier(
             2,
             PasswordUtil::injectSpecialCharacter);
 

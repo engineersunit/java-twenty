@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'org.sun.ghosh.designpatterns'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+compileJava{
+    dependsOn clean
+}
+
+compileJava {
+    options.compilerArgs.addAll(
+            ['--enable-preview',
+             '--add-modules', 'jdk.incubator.concurrent'
+            ])
+}
+
+ext {
+    javaMainClass = "org.sun.ghosh.designpatterns.PoisonPillPattern"
+}
+
+application {
+    mainClassName = javaMainClass
+    applicationDefaultJvmArgs = ["--enable-preview", '--add-modules', 'jdk.incubator.concurrent']
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

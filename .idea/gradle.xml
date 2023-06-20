@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/DependencyManagement" />
+            <option value="$PROJECT_DIR$/DesignPatterns" />
             <option value="$PROJECT_DIR$/JSONProcessing" />
             <option value="$PROJECT_DIR$/VirtualThreads" />
           </set>
