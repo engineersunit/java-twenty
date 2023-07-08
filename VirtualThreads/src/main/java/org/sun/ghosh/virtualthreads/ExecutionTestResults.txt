@@ -1,0 +1,33 @@
+PasswordUtil.java
+
+THREAD_NUM = 1000
+
+###########################################
+# Without I/O operation
+###########################################
+## Virtual Thread - newVirtualThreadPerTaskExecutor
+Created password of length 3500 in 0 seconds and 42.126300 milliseconds.
+
+## Platform Thread - newCachedThreadPool
+Created password of length 3500 in 0 seconds and 33.307700 milliseconds.
+
+## Platform Thread - newFixedThreadPool(10)
+Created password of length 3500 in 0 seconds and 19.679500 milliseconds.
+
+## Platform Thread - newSingleThreadExecutor
+Created password of length 4000 in 0 seconds and 16.606600 milliseconds.
+
+###########################################
+# With I/O operation - Thread.sleep(100)
+###########################################
+## Virtual Thread - newVirtualThreadPerTaskExecutor
+Created password of length 3500 in 0 seconds and 154.055800 milliseconds.
+
+## Platform Thread - newCachedThreadPool
+Created password of length 3500 in 0 seconds and 225.470400 milliseconds.
+
+## Platform Thread - newFixedThreadPool(10)
+Created password of length 3500 in 10 seconds and 932.989700 milliseconds.
+
+## Platform Thread - newSingleThreadExecutor
+Created password of length 4000 in 109 seconds and 388.895600 milliseconds.

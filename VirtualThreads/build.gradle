@@ -25,12 +25,23 @@ compileJava {
 }
 
 ext {
+//    javaMainClass = "org.sun.ghosh.virtualthreads.MyFavoriteJavaSites"
     javaMainClass = "org.sun.ghosh.virtualthreads.PasswordUtil"
 }
 
 application {
     mainClassName = javaMainClass
-    applicationDefaultJvmArgs = ["--enable-preview", '--add-modules', 'jdk.incubator.concurrent']
+    applicationDefaultJvmArgs = ["--enable-preview",
+                                 '--add-modules',
+                                 'jdk.incubator.concurrent']
+}
+
+run {
+//    args = ["PLATFORM"]
+//    args = ["VIRTUAL"]
+//    args = ["QUICK"]
+//    args = ["ALL_OR_NONE"]
+//    args = ["SCOPED_VALUE"]
 }
 
 dependencies {

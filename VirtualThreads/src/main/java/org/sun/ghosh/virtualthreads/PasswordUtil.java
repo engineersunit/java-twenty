@@ -17,7 +17,7 @@ public class PasswordUtil {
 
     private final static List<Character> listOfPasswordCandidates = Collections.
             synchronizedList(new ArrayList<>());
-    final static int TYPE_MAX_CHAR = 400;
+    final static int THREAD_NUM = 1000; // Generates N * 3.5 chars
 
     private static final CyclicBarrier cyclicBarrier =
             new CyclicBarrier(
@@ -26,12 +26,17 @@ public class PasswordUtil {
 
     public static void main(String[] args) {
         Instant startTime = Instant.now();
-        try (var executor =
-                     Executors.newVirtualThreadPerTaskExecutor()) {
-
+        /*try (var executor =
+                     Executors.newVirtualThreadPerTaskExecutor()) {*/
+        /*try (var executor =
+                         Executors.newCachedThreadPool()) {*/
+            try (var executor =
+                         Executors.newFixedThreadPool(10)) {
+                /*try (var executor =
+                             Executors.newSingleThreadExecutor()) {*/
             // Spawn TYPE_MAX_CHAR Virtual Threads for
             // a mix of A-Z, a-z, 0-9 and special characters
-            IntStream.rangeClosed(1, TYPE_MAX_CHAR).
+            IntStream.rangeClosed(1, THREAD_NUM).
                     forEach((i) ->
                             executor.submit(PasswordUtil::generateData));
 
@@ -39,7 +44,7 @@ public class PasswordUtil {
             executor.shutdown();
             try {
                 // Wait a while for existing tasks to terminate
-                if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+                if (!executor.awaitTermination(120, TimeUnit.SECONDS)) {
                     executor.shutdownNow(); // Cancel currently executing tasks
                     // Wait a while for tasks to respond to being cancelled
                     if (!executor.awaitTermination(2, TimeUnit.SECONDS))
@@ -74,7 +79,8 @@ public class PasswordUtil {
      * 65-90  - A-Z
      * 97-122 - a-z
      *
-     * <a href="https://owasp.org/www-community/password-special-characters">Password Special Characters</a>
+     * <a href="https://owasp.org/www-community/password-special-characters">
+     *     Open Worldwide Application Security Project - Password Special Characters</a>
      * <p>
      * 33	!	Exclamation
      * 35	#	Number sign (hash)
@@ -99,6 +105,12 @@ public class PasswordUtil {
         listOfPasswordCandidates.
                 add(generateRandomChar(90, 65));
 
+        try {
+            // Mimicking a I/O operation of 100ms
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         try {
             cyclicBarrier.await();
         } catch (InterruptedException |

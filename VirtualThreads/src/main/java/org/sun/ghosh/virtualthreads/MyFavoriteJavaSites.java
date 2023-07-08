@@ -1,4 +1,4 @@
-package org.sun.ghosh;
+package org.sun.ghosh.virtualthreads;
 
 import jdk.incubator.concurrent.ScopedValue;
 import jdk.incubator.concurrent.StructuredTaskScope;
@@ -60,7 +60,9 @@ public class MyFavoriteJavaSites {
                 }
                 break;
             case PLATFORM:
-                try (var executor = Executors.newCachedThreadPool()) {
+//                try (var executor = Executors.newCachedThreadPool()) {
+//                try (var executor = Executors.newSingleThreadExecutor()) {
+                  try (var executor = Executors.newFixedThreadPool(10)) {
                     futures =
                             myFavSitesURLList.stream()
                                     .map(url -> executor.submit(() -> Utils.fetchURL(url)))
@@ -119,7 +121,7 @@ public class MyFavoriteJavaSites {
         // Remove from next iteration if URL is visited and written to file.
         List<Future> futuresClone =
                 (List<Future>) ((ArrayList<Future>) futures).clone();
-        try (FileWriter fw = new FileWriter("D:\\MyFavSites.html")) {
+        try (FileWriter fw = new FileWriter("./src/main/java/org/sun/ghosh/virtualthreads/MyFavSites.html")) {
             while (!futuresClone.isEmpty()) {
                 for (Future f : futures) {
                     if (f.isDone()) {
