@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.sun.ghosh.virtualthreads.MyFavoriteJavaSites.SECURE;
@@ -83,5 +85,26 @@ public class Utils {
                 throw new RuntimeException(e);
             }
         }).collect(Collectors.toList());
+    }
+
+    static void shutdownExecutorService(ExecutorService executor, int seconds) {
+        // Disable new tasks from being submitted
+        executor.shutdown();
+        try {
+            // Wait a while for existing tasks to terminate
+            if (!executor.awaitTermination(seconds, TimeUnit.SECONDS)) {
+                executor.shutdownNow(); // Cancel currently executing tasks
+                // Wait a while for tasks to respond to being cancelled
+                if (!executor.awaitTermination(1, TimeUnit.SECONDS))
+                    System.err.println("Created Virtual Thread Per Task Executor did not terminate");
+            } else {
+                System.out.println("Created Virtual Thread Per Task Executor terminated");
+            }
+        } catch (InterruptedException ie) {
+            // (Re-)Cancel if current thread also interrupted
+            executor.shutdownNow();
+            // Preserve interrupt status
+            Thread.currentThread().interrupt();
+        }
     }
 }

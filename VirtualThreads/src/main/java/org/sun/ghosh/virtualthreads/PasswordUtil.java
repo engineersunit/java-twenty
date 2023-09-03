@@ -26,14 +26,14 @@ public class PasswordUtil {
 
     public static void main(String[] args) {
         Instant startTime = Instant.now();
-        /*try (var executor =
-                     Executors.newVirtualThreadPerTaskExecutor()) {*/
+        try (var executor =
+                     Executors.newVirtualThreadPerTaskExecutor()) {
         /*try (var executor =
                          Executors.newCachedThreadPool()) {*/
-            try (var executor =
-                         Executors.newFixedThreadPool(10)) {
-                /*try (var executor =
-                             Executors.newSingleThreadExecutor()) {*/
+        /*try (var executor =
+                     Executors.newFixedThreadPool(10)) {*/
+        /*try (var executor =
+                     Executors.newSingleThreadExecutor()) {*/
             // Spawn TYPE_MAX_CHAR Virtual Threads for
             // a mix of A-Z, a-z, 0-9 and special characters
             IntStream.rangeClosed(1, THREAD_NUM).
@@ -106,11 +106,12 @@ public class PasswordUtil {
                 add(generateRandomChar(90, 65));
 
         try {
-            // Mimicking a I/O operation of 100ms
-            Thread.sleep(100);
+            // Mimicking a I/O operation of 10ms
+            Thread.sleep(10);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         try {
             cyclicBarrier.await();
         } catch (InterruptedException |
