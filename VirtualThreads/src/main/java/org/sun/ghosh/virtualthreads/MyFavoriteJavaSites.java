@@ -1,7 +1,7 @@
 package org.sun.ghosh.virtualthreads;
 
-import jdk.incubator.concurrent.ScopedValue;
-import jdk.incubator.concurrent.StructuredTaskScope;
+import java.lang.ScopedValue;
+import java.util.concurrent.StructuredTaskScope;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,7 +24,6 @@ public class MyFavoriteJavaSites {
         QUICK, // StructuredTaskScope.ShutdownOnSuccess
         ALL_OR_NONE, // StructuredTaskScope.ShutdownOnFailure
         SCOPED_VALUE
-
     }
 
     enum HttpSecurity {
@@ -72,12 +71,12 @@ public class MyFavoriteJavaSites {
             case QUICK:
                 try (var scope =
                              new StructuredTaskScope.ShutdownOnSuccess<String>()) {
-                    futures =
-                            myFavSitesURLList.stream()
+                    myFavSitesURLList.stream()
                                     .map(url -> scope.fork(() -> Utils.fetchURL(url)))
                                     .collect(Collectors.toList());
 
                     var result = scope.join().result();
+                    System.out.println("Mode QUICK result: " + result);
 
                 } catch (ExecutionException | InterruptedException e) {
                     throw new RuntimeException(e);
@@ -85,8 +84,7 @@ public class MyFavoriteJavaSites {
                 break;
             case ALL_OR_NONE:
                 try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-                    futures =
-                            myFavSitesURLList.stream()
+                    myFavSitesURLList.stream()
                                     .map(url -> scope.fork(() -> Utils.fetchURL(url)))
                                     .collect(Collectors.toList());
                     scope.join();           // Join forks

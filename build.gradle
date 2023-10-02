@@ -15,15 +15,22 @@ jar {
 
 javadoc.options {
     addBooleanOption('-enable-preview', true)
-    addStringOption('-release', '20')
-    addStringOption('-add-modules', 'jdk.incubator.concurrent')
+    addStringOption('-release', '21')
 }
 
 group 'org.sun.ghosh'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = JavaVersion.VERSION_20
-targetCompatibility = JavaVersion.VERSION_20
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+
+// https://docs.gradle.org/8.4-rc-3/release-notes.html#support-for-building-projects-with-java-21
+// https://docs.gradle.org/8.4-rc-3/userguide/toolchains.html
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -31,8 +38,7 @@ repositories {
 
 compileJava {
     options.compilerArgs.addAll(
-            ['--enable-preview',
-             '--add-modules', 'jdk.incubator.concurrent'
+            ['--enable-preview'
             ])
 }
 

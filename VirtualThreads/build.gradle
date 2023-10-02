@@ -10,8 +10,8 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = JavaVersion.VERSION_20
-targetCompatibility = JavaVersion.VERSION_20
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 compileJava{
     dependsOn clean
@@ -19,9 +19,7 @@ compileJava{
 
 compileJava {
     options.compilerArgs.addAll(
-            ['--enable-preview',
-             '--add-modules', 'jdk.incubator.concurrent'
-            ])
+            ['--enable-preview'])
 }
 
 ext {
@@ -31,9 +29,7 @@ ext {
 
 application {
     mainClassName = javaMainClass
-    applicationDefaultJvmArgs = ["--enable-preview",
-                                 '--add-modules',
-                                 'jdk.incubator.concurrent']
+    applicationDefaultJvmArgs = ["--enable-preview"]
 }
 
 run {
@@ -45,8 +41,6 @@ run {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 test {

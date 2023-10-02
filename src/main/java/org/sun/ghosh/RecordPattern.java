@@ -85,7 +85,16 @@ public class RecordPattern {
                 List.of(new CartesianCoordinate(1, 1, 1),
                         new CartesianCoordinate(2, 2, 2));
         // Record Pattern in for header!
-        for (CartesianCoordinate(
+        // Not supported in Java 21 https://openjdk.org/jeps/440
+        // https://youtrack.jetbrains.com/issue/IDEA-332862/Record-patterns-in-for-each-loops-are-not-supported-at-language-level-21
+        /*
+            Apart from some minor editorial changes,
+            the main change since the second preview is to
+            remove support for record patterns appearing in the
+            header of an enhanced for statement.
+            This feature may be re-proposed in a future JEP.
+         */
+        /*for (CartesianCoordinate(
                 var x,
                 var y,
                 var z
@@ -94,7 +103,7 @@ public class RecordPattern {
                     "(" + x + ", " +
                             "" + y + ", " +
                             "" + z + ")");
-        }
+        }*/
 
         Pair<A> p1 = null;
         Pair<I> p2 = null;
@@ -181,12 +190,21 @@ public class RecordPattern {
      * @param r
      */
     static void printUpperLeftGeolocation(MapLocation[] r) {
-        for (MapLocation(
+        // Not supported in Java 21 https://openjdk.org/jeps/440
+        // https://youtrack.jetbrains.com/issue/IDEA-332862/Record-patterns-in-for-each-loops-are-not-supported-at-language-level-21
+        /*
+            Apart from some minor editorial changes,
+            the main change since the second preview is to
+            remove support for record patterns appearing in the
+            header of an enhanced for statement.
+            This feature may be re-proposed in a future JEP.
+         */
+        /*for (MapLocation(
                 MapCoordinate(
                         CartesianCoordinate p, Geolocation c),
                 MapCoordinate lr
         ) : r) {
             System.out.println(c);
-        }
+        }*/
     }
 }
